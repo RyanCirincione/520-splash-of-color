@@ -7,11 +7,14 @@ from sklearn.datasets import load_sample_image
 from sklearn.utils import shuffle
 from time import time
 from skimage import data
+import cv2
 
-n_colors = 9
+n_colors = 5
 
 # Load the Summer Palace photo
-china = data.coffee()
+#china = data.coffee()
+china = cv2.imread('input/coffee_easy.png')
+china = cv2.cvtColor(china, cv2.COLOR_BGR2RGB)
 
 # Convert to floats instead of the default 8 bits integer coding. Dividing by
 # 255 is important so that plt.imshow behaves works well on float data (need to
