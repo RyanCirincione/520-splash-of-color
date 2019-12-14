@@ -114,4 +114,4 @@ def net(gray_img, rgb, img_shape, rgb_book, rgb_book_reverse, descent='F'):
     plt.imshow(img)
     plt.show()
     print(img)
-    cv2.imwrite('result.png',img)
+    cv2.imwrite('result5.png',img)

@@ -44,7 +44,10 @@ for i in range(cam.shape[0]):
        if abs(cam.shape[0] - i) <= offset or abs(cam.shape[1] - j) <= offset or i < offset or j < offset:
            cam[i][j] = np.array([255, 255, 255])
 
-cam_gray = rgb2gray(cam)
+
+cam_2 = cv2.imread('input/coffee_easy.png') #grayscale data of normal image
+cam_2 = cv2.cvtColor(cam_2, cv2.COLOR_BGR2RGB)
+cam_gray = rgb2gray(cam_2)
 
 correct_images = traverse(reduced_cam)
 
