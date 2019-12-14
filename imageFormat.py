@@ -2,7 +2,7 @@ import numpy as np
 from skimage import data
 import matplotlib.pylab as plt
 from skimage.color import rgb2gray
-import cv2 #we only use this to read the input image
+import cv2#we only use this to read the input image
 from t2 import net
 from helpers import tokenize
 

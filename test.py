@@ -20,7 +20,7 @@ def sigmoid_der(x):
 
 wh = np.random.rand(len(feature_set[0]),4) 
 wo = np.random.rand(4, 1)
-lr = 0.5
+learning_rate = 0.5
 
 for epoch in range(200000):
     # feedforward
@@ -54,7 +54,7 @@ for epoch in range(200000):
 
     # Update Weights ================
 
-    wh -= lr * dcost_wh
-    wo -= lr * dcost_wo
+    wh -= learning_rate * dcost_wh
+    wo -= learning_rate * dcost_wo
 
     
