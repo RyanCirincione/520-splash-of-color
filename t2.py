@@ -33,7 +33,7 @@ def net(gray_img, rgb, img_shape, rgb_book, rgb_book_reverse, descent='F'):
     out_weights = np.random.rand(hidden_nodes,output_labels)
     out_biases = np.random.randn(output_labels)
     
-    runs = 10000
+    runs = 50000
     history = []
 
     for run in range(runs):
@@ -68,7 +68,7 @@ def net(gray_img, rgb, img_shape, rgb_book, rgb_book_reverse, descent='F'):
             out_weights -= learning_rate * y
             out_biases -= learning_rate * y[0].sum(axis=0)
 
-        divd = 100
+        divd = 1000
         if run % divd == 0:
             loss = np.sum(-labels_vector * np.log(resultant))
             history.append(loss)
