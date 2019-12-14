@@ -3,13 +3,18 @@ import matplotlib.pyplot as plt
 from helpers import tokenize, sigmoid, softmax, sigmoid_d
 import scipy.special
 import math
+import cv2
 
 def codebook_transform(id, codebook):
     arr = [0] * len(codebook)
     arr[int(id)] = 1
     return arr
 
-def net(gray_img, rgb, rgb_book, rgb_book_reverse, descent='F'):
+def net(gray_img, rgb, img_shape, rgb_book, rgb_book_reverse, descent='F'):
+
+    gray_img_full = gray_img[:]
+    rgb_full = rgb[:]
+
     gray_img_test = gray_img[7 * len(gray_img) // 8 : len(gray_img)]
     rgb_test = rgb[7 * len(rgb) // 8 : len(rgb)]
     gray_img = gray_img[0:7 * len(gray_img) // 8]
@@ -28,7 +33,7 @@ def net(gray_img, rgb, rgb_book, rgb_book_reverse, descent='F'):
     out_weights = np.random.rand(hidden_nodes,output_labels)
     out_biases = np.random.randn(output_labels)
     
-    runs = 15000
+    runs = 10000
     history = []
 
     for run in range(runs):
@@ -59,15 +64,17 @@ def net(gray_img, rgb, rgb_book, rgb_book_reverse, descent='F'):
             y = np.array(y)
 
             hidden_weights -= learning_rate * np.dot(features.T, x)
-            hidden_biases -= learning_rate * x.sum(axis=0)
+            hidden_biases -= learning_rate * x[0].sum(axis=0)
             out_weights -= learning_rate * y
-            out_biases -= learning_rate * y.sum(axis=0)
+            out_biases -= learning_rate * y[0].sum(axis=0)
 
-        if run % 1000 == 0:
+        divd = 100
+        if run % divd == 0:
             loss = np.sum(-labels_vector * np.log(resultant))
             history.append(loss)
-            print("Loss:", loss)
+            print(f'Loss: (heat #{int(run/divd)}/{int(runs/divd)})', loss)
     
+    #testing data
     features = np.array([image.flatten() for image in gray_img_test])
     labels = np.array([i[1][1] for i in rgb_test])
     labels_vector = np.zeros((len(gray_img_test), 5)) # training labels, each in form [0. 0. 0. 1. 0.]
@@ -81,3 +88,30 @@ def net(gray_img, rgb, rgb_book, rgb_book_reverse, descent='F'):
 
     loss = np.sum(-labels_vector * np.log(resultant))
     print("Testing Loss:", loss)
+
+    #final product
+
+    features = np.array([image.flatten() for image in gray_img_full])
+    labels = np.array([i[1][1] for i in rgb_full])
+    labels_vector = np.zeros((len(gray_img_full), 5)) # training labels, each in form [0. 0. 0. 1. 0.]
+    for i in range(len(gray_img_full)):
+        labels_vector[i, int(labels[i])] = 1
+    
+    output_hidden = np.dot(features, hidden_weights) + hidden_biases #run layer 1
+    output_hidden_actived = sigmoid(output_hidden)
+    output_outer = np.dot(output_hidden_actived, out_weights) + out_biases #run layer 2 (outer)
+    resultant = softmax(output_outer)
+
+    loss = np.sum(-labels_vector * np.log(resultant))
+    print("Final Loss:", loss)
+
+    img = np.zeros( img_shape, dtype=int )
+    for i in range(1,img_shape[0]-2):
+        for j in range(1,img_shape[1]-2):
+            index = (i-1) * (img_shape[1] - 2) + j - 1
+            img[i][j] = rgb_book[np.nonzero(output_outer[index] == (max(output_outer[index])))[0][0]]
+
+    plt.imshow(img)
+    plt.show()
+    print(img)
+    cv2.imwrite('result.png',img)

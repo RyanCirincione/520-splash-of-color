@@ -2,6 +2,7 @@ import numpy as np
 from skimage import data
 import matplotlib.pylab as plt
 from skimage.color import rgb2gray
+import skimage.io
 import cv2#we only use this to read the input image
 from t2 import net
 from helpers import tokenize
@@ -11,7 +12,7 @@ def traverse(array):
     bud_size = 3
     for i in range(len(array) - bud_size + 1):
         for j in range(len(array[0]) - bud_size + 1):
-            output.append(array[i:i+bud_size,j:j+bud_size])
+            output.append(array[i:i+bud_size,j:j+bud_size])  
     return output
 
 cam = cv2.imread('input/coffee_5.png')#data.coffee()
@@ -54,7 +55,7 @@ print (input_data[-1][0][0])
 
 #correct_images  = correct_images[0:len(correct_images)//10]
 #input_data      = input_data[0:len(input_data)//10]
-net(input_data, correct_images, color_codebook, color_reverse_codebook)
+net(input_data, correct_images, cam.shape, color_codebook, color_reverse_codebook)
 
 plt.gray()
 plt.imshow(cam_gray)
