@@ -12,10 +12,10 @@ def traverse(array):
     bud_size = 3
     for i in range(len(array) - bud_size + 1):
         for j in range(len(array[0]) - bud_size + 1):
-            output.append(array[i:i+bud_size,j:j+bud_size])  
+            output.append(array[i:i+bud_size,j:j+bud_size])
     return output
 
-cam = cv2.imread('input/coffee_5.png')#data.coffee()
+cam = cv2.imread('input/waterfall1_5.png')#data.coffee()
 cam = cv2.cvtColor(cam, cv2.COLOR_BGR2RGB)
 #cam = data.coffee()
 
@@ -44,7 +44,8 @@ for i in range(cam.shape[0]):
        if abs(cam.shape[0] - i) <= offset or abs(cam.shape[1] - j) <= offset or i < offset or j < offset:
            cam[i][j] = np.array([255, 255, 255])
 
-cam_gray = rgb2gray(cam)
+cam_gray = cv2.imread('input/waterfall1.png')#data.coffee()
+cam_gray = rgb2gray(cam_gray)
 
 correct_images = traverse(reduced_cam)
 
@@ -57,6 +58,9 @@ print (input_data[-1][0][0])
 #input_data      = input_data[0:len(input_data)//10]
 net(input_data, correct_images, cam.shape, color_codebook, color_reverse_codebook)
 
+plt.figure(2)
 plt.gray()
 plt.imshow(cam_gray)
+plt.figure(3)
+plt.imshow(cam)
 plt.show()

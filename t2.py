@@ -12,6 +12,8 @@ def codebook_transform(id, codebook):
 
 def net(gray_img, rgb, img_shape, rgb_book, rgb_book_reverse, descent='F'):
 
+    output_labels = 5
+
     gray_img_full = gray_img[:]
     rgb_full = rgb[:]
 
@@ -21,18 +23,17 @@ def net(gray_img, rgb, img_shape, rgb_book, rgb_book_reverse, descent='F'):
     rgb = rgb[0:7 * len(rgb) // 8]
     features = np.array([image.flatten() for image in gray_img])
     labels = np.array([i[1][1] for i in rgb])
-    labels_vector = np.zeros((len(gray_img), 5)) # training labels, each in form [0. 0. 0. 1. 0.]
+    labels_vector = np.zeros((len(gray_img), output_labels)) # training labels, each in form [0. 0. 0. 1. 0.]
     for i in range(len(gray_img)):
         labels_vector[i, int(labels[i])] = 1
 
-    hidden_nodes = 9
-    output_labels = 5
+    hidden_nodes = 30
     learning_rate = 0.0011
     hidden_weights = np.random.rand(features.shape[1],hidden_nodes)
     hidden_biases = np.random.randn(hidden_nodes)
     out_weights = np.random.rand(hidden_nodes,output_labels)
     out_biases = np.random.randn(output_labels)
-    
+
     runs = 10000
     history = []
 
@@ -42,7 +43,7 @@ def net(gray_img, rgb, img_shape, rgb_book, rgb_book_reverse, descent='F'):
         output_hidden_actived = sigmoid(output_hidden)
         output_outer = np.dot(output_hidden_actived, out_weights) + out_biases #run layer 2 (outer)
         resultant = softmax(output_outer)
-        
+
         #Back Propagate
         differential = resultant - labels_vector
         output_hidden_actived_difference = np.dot(output_hidden_actived.T, differential)
@@ -54,7 +55,7 @@ def net(gray_img, rgb, img_shape, rgb_book, rgb_book_reverse, descent='F'):
             hidden_biases -= learning_rate * d_hidden.sum(axis=0)
             out_weights -= learning_rate * output_hidden_actived_difference
             out_biases -= learning_rate * differential.sum(axis=0)
-        elif (descent == 'S'): #stochastic    
+        elif (descent == 'S'): #stochastic
             x = (d_hidden[np.random.randint(0, len(d_hidden - 1))])
             x = ([x for _ in range(len(d_hidden))])
             #update
@@ -72,15 +73,15 @@ def net(gray_img, rgb, img_shape, rgb_book, rgb_book_reverse, descent='F'):
         if run % divd == 0:
             loss = np.sum(-labels_vector * np.log(resultant))
             history.append(loss)
-            print(f'Loss: (heat #{int(run/divd)}/{int(runs/divd)})', loss)
-    
+            print(f'Loss: (heat #{int(run/divd)}/{int(runs/divd)})', loss,flush=True)
+
     #testing data
     features = np.array([image.flatten() for image in gray_img_test])
     labels = np.array([i[1][1] for i in rgb_test])
-    labels_vector = np.zeros((len(gray_img_test), 5)) # training labels, each in form [0. 0. 0. 1. 0.]
+    labels_vector = np.zeros((len(gray_img_test), output_labels)) # training labels, each in form [0. 0. 0. 1. 0.]
     for i in range(len(gray_img_test)):
         labels_vector[i, int(labels[i])] = 1
-    
+
     output_hidden = np.dot(features, hidden_weights) + hidden_biases #run layer 1
     output_hidden_actived = sigmoid(output_hidden)
     output_outer = np.dot(output_hidden_actived, out_weights) + out_biases #run layer 2 (outer)
@@ -93,10 +94,10 @@ def net(gray_img, rgb, img_shape, rgb_book, rgb_book_reverse, descent='F'):
 
     features = np.array([image.flatten() for image in gray_img_full])
     labels = np.array([i[1][1] for i in rgb_full])
-    labels_vector = np.zeros((len(gray_img_full), 5)) # training labels, each in form [0. 0. 0. 1. 0.]
+    labels_vector = np.zeros((len(gray_img_full), output_labels)) # training labels, each in form [0. 0. 0. 1. 0.]
     for i in range(len(gray_img_full)):
         labels_vector[i, int(labels[i])] = 1
-    
+
     output_hidden = np.dot(features, hidden_weights) + hidden_biases #run layer 1
     output_hidden_actived = sigmoid(output_hidden)
     output_outer = np.dot(output_hidden_actived, out_weights) + out_biases #run layer 2 (outer)
@@ -111,7 +112,7 @@ def net(gray_img, rgb, img_shape, rgb_book, rgb_book_reverse, descent='F'):
             index = (i-1) * (img_shape[1] - 2) + j - 1
             img[i][j] = rgb_book[np.nonzero(output_outer[index] == (max(output_outer[index])))[0][0]]
 
+    plt.figure(1)
     plt.imshow(img)
-    plt.show()
     print(img)
     cv2.imwrite('result.png',img)
