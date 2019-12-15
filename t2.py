@@ -69,7 +69,7 @@ def net(gray_img, rgb, img_shape, rgb_book, rgb_book_reverse, descent='F'):
             out_weights -= learning_rate * y
             out_biases -= learning_rate * y[0].sum(axis=0)
 
-        divd = 100
+        divd = 1000
         if run % divd == 0:
             loss = np.sum(-labels_vector * np.log(resultant))
             history.append(loss)
@@ -115,4 +115,8 @@ def net(gray_img, rgb, img_shape, rgb_book, rgb_book_reverse, descent='F'):
     plt.figure(1)
     plt.imshow(img)
     print(img)
+<<<<<<< HEAD
     cv2.imwrite('result.png',img)
+=======
+    cv2.imwrite('result5.png',img)
+>>>>>>> 07ada11849746944c7a45b46b5a76c2812e77ca8
