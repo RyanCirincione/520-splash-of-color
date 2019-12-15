@@ -115,8 +115,4 @@ def net(gray_img, rgb, img_shape, rgb_book, rgb_book_reverse, descent='F'):
     plt.figure(1)
     plt.imshow(img)
     print(img)
-<<<<<<< HEAD
     cv2.imwrite('result.png',img)
-=======
-    cv2.imwrite('result5.png',img)
->>>>>>> 07ada11849746944c7a45b46b5a76c2812e77ca8
